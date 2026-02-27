@@ -1,7 +1,5 @@
-﻿namespace Mission08_Team0111.Models
-{
-    public class Category
-    {
+﻿using System.Collections.Generic;
+
 namespace Mission08_Team0111.Models
 {
     public class Category
