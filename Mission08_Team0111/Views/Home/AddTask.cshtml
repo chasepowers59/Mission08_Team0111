@@ -1,0 +1,57 @@
+﻿@model Mission08_Team0111.Models.Task
+
+@{
+    ViewData["Title"] = "Add Task";
+}
+
+<div class="container mt-4">
+    <h2>Add a New Task</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post" asp-controller="Tasks" asp-action="Add">
+                @* Displays a summary of validation errors at the top of the form *@
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Title" class="control-label fw-bold">Task Title</label>
+                    <input asp-for="Title" class="form-control" placeholder="Enter task name" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="DueDate" class="control-label fw-bold">Due Date (Optional)</label>
+                    <input asp-for="DueDate" class="form-control" type="date" />
+                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Quadrant" class="control-label fw-bold">Quadrant</label>
+                    <select asp-for="Quadrant" class="form-select">
+                        <option value="">-- Select a Quadrant --</option>
+                        <option value="1">Quadrant 1: Important / Urgent</option>
+                        <option value="2">Quadrant 2: Important / Not Urgent</option>
+                        <option value="3">Quadrant 3: Not Important / Urgent</option>
+                        <option value="4">Quadrant 4: Not Important / Not Urgent</option>
+                    </select>
+                    <span asp-validation-for="Quadrant" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="CategoryId" class="control-label fw-bold">Category</label>
+                    @* This dropdown requires a ViewBag.Categories list to be passed from your controller *@
+                    <select asp-for="CategoryId" class="form-select" asp-items="@ViewBag.Categories">
+                        <option value="">-- Select a Category --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">Save Task</button>
+                    <a asp-controller="Tasks" asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

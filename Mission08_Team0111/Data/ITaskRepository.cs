@@ -1,7 +1,4 @@
-﻿namespace Mission08_Team0111.Data
-{
-    public class ITaskRepository
-    {
+﻿using System.Collections.Generic;
 using Mission08_Team0111.Models;
 
 namespace Mission08_Team0111.Data
