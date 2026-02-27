@@ -5,23 +5,22 @@
 }
 
 <div class="container mt-4">
-    <h2>Add a New Task</h2>
+    <h2>Add New Task</h2>
     <hr />
 
     <div class="row">
         <div class="col-md-6">
             <form method="post" asp-controller="Tasks" asp-action="Add">
-                @* Displays a summary of validation errors at the top of the form *@
                 <div asp-validation-summary="All" class="text-danger"></div>
 
                 <div class="form-group mb-3">
-                    <label asp-for="Title" class="control-label fw-bold">Task Title</label>
+                    <label asp-for="Title" class="control-label fw-bold">Task</label>
                     <input asp-for="Title" class="form-control" placeholder="Enter task name" />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
 
                 <div class="form-group mb-3">
-                    <label asp-for="DueDate" class="control-label fw-bold">Due Date (Optional)</label>
+                    <label asp-for="DueDate" class="control-label fw-bold">Due Date</label>
                     <input asp-for="DueDate" class="form-control" type="date" />
                     <span asp-validation-for="DueDate" class="text-danger"></span>
                 </div>
@@ -40,14 +39,22 @@
 
                 <div class="form-group mb-3">
                     <label asp-for="CategoryId" class="control-label fw-bold">Category</label>
-                    @* This dropdown requires a ViewBag.Categories list to be passed from your controller *@
-                    <select asp-for="CategoryId" class="form-select" asp-items="@ViewBag.Categories">
+                    <select asp-for="CategoryId" class="form-select">
                         <option value="">-- Select a Category --</option>
+                        <option value="1">Home</option>
+                        <option value="2">School</option>
+                        <option value="3">Work</option>
+                        <option value="4">Church</option>
                     </select>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
 
-                <div class="form-group mt-4">
+                <div class="form-group mb-4 form-check">
+                    <input asp-for="Completed" class="form-check-input" />
+                    <label asp-for="Completed" class="form-check-label fw-bold">Completed</label>
+                </div>
+
+                <div class="form-group">
                     <button type="submit" class="btn btn-primary">Save Task</button>
                     <a asp-controller="Tasks" asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
                 </div>
