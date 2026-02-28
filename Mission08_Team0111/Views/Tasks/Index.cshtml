@@ -24,7 +24,7 @@
                     <!-- pull the tasks in from the database if the task is in quad 1 -->
                     @foreach (var x in Model)
                     {
-                        if (x.Quadrant == 1)
+                        if (x.Completed == false && x.Quadrant == 1)
                         {
                             <table class="table">
                                 <tbody>
@@ -46,7 +46,7 @@
                     <!-- pull the tasks in from the database if the task is in quad 2 -->
                     @foreach (var x in Model)
                     {
-                        if (x.Quadrant == 2)
+                        if (x.Completed == false && x.Quadrant == 2)
                         {
                             <table class="table">
                                 <tbody>
@@ -70,7 +70,7 @@
                     <!-- pull the tasks in from the database if the task is in quad 3 -->
                     @foreach (var x in Model)
                     {
-                        if (x.Quadrant == 3)
+                        if (x.Completed == false && x.Quadrant == 3)
                         {
                             <table class="table">
                                 <tbody>
@@ -92,7 +92,7 @@
                     <!-- pull the tasks in from the database if the task is in quad 4 -->
                     @foreach (var x in Model)
                     {
-                        if (x.Quadrant == 4)
+                        if (x.Completed == false && x.Quadrant == 4)
                         {
                             <table class="table">
                                 <tbody>
