@@ -1,0 +1,115 @@
+﻿@model Task
+
+<div class="container-fluid mt-3">
+    <!-- Top Label -->
+    <div class="row">
+        <div class="col-1"></div> <!-- spacer for left label -->
+        <div class="col-6 text-center border border-dark py-2">Urgent</div>
+        <div class="col-5 text-center border border-dark py-2">Not Urgent</div>
+    </div>
+
+    <!-- Left Label + Quadrant Box -->
+    <div class="row" style="min-height: 80vh;">
+        <!-- Left Label -->
+        <div class="col-1 border border-dark d-flex flex-column justify-content-evenly align-items-center p-0">
+            <div class="left-label-div">Important</div>
+            <div class="left-label-div">Not Important</div>
+        </div>
+
+        <!-- Quadrant Box -->
+        <div class="col-11 p-0">
+            <div class="row h-50 m-0">
+                <!-- Q1 - top left -->
+                <div class="col-6 border border-dark p-2">
+                    <!-- pull the tasks in from the database if the task is in quad 1 -->
+                    @foreach (var x in Model)
+                    {
+                        if (x.Quadrant == 1)
+                        {
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <td>@x.Title</td>
+                                    <td>@x.DueDate</td>
+                                    <!-- Edit, Completed, and Delete Buttons -->
+                                    <td><a class="btn btn-info" asp-controller="Tasks" asp-action="Edit" asp-route-id="@x.TaskId">Edit Task</a></td>
+                                    <td><a class="btn btn-info" asp-controller="Tasks" asp-action="Completed" asp-route-id="@x.TaskId">Task Completed</a></td>
+                                    <td><a class="btn btn-danger" asp-controller="Tasks" asp-action="Delete" asp-route-id="@x.TaskId">Delete</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+                <!-- Q2 - top right -->
+                <div class="col-6 border border-dark p-2">
+                    <!-- pull the tasks in from the database if the task is in quad 2 -->
+                    @foreach (var x in Model)
+                    {
+                        if (x.Quadrant == 2)
+                        {
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <td>@x.Title</td>
+                                    <td>@x.DueDate</td>
+                                    <!-- Edit, Completed, and Delete Buttons -->
+                                    <td><a class="btn btn-info" asp-controller="Tasks" asp-action="Edit" asp-route-id="@x.TaskId">Edit Task</a></td>
+                                    <td><a class="btn btn-info" asp-controller="Tasks" asp-action="Completed" asp-route-id="@x.TaskId">Task Completed</a></td>
+                                    <td><a class="btn btn-danger" asp-controller="Tasks" asp-action="Delete" asp-route-id="@x.TaskId">Delete</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="row h-50 m-0">
+                <!-- Q3 - bottom left -->
+                <div class="col-6 border border-dark p-2">
+                    <!-- pull the tasks in from the database if the task is in quad 3 -->
+                    @foreach (var x in Model)
+                    {
+                        if (x.Quadrant == 3)
+                        {
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <td>@x.Title</td>
+                                    <td>@x.DueDate</td>
+                                    <!-- Edit, Completed, and Delete Buttons -->
+                                    <td><a class="btn btn-info" asp-controller="Tasks" asp-action="Edit" asp-route-id="@x.TaskId">Edit Task</a></td>
+                                    <td><a class="btn btn-info" asp-controller="Tasks" asp-action="Completed" asp-route-id="@x.TaskId">Task Completed</a></td>
+                                    <td><a class="btn btn-danger" asp-controller="Tasks" asp-action="Delete" asp-route-id="@x.TaskId">Delete</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+                <!-- Q4 - bottom right -->
+                <div class="col-6 border border-dark p-2">
+                    <!-- pull the tasks in from the database if the task is in quad 4 -->
+                    @foreach (var x in Model)
+                    {
+                        if (x.Quadrant == 4)
+                        {
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <td>@x.Title</td>
+                                    <td>@x.DueDate</td>
+                                    <!-- Edit, Completed, and Delete Buttons -->
+                                    <td><a class="btn btn-info" asp-controller="Tasks" asp-action="Edit" asp-route-id="@x.TaskId">Edit Task</a></td>
+                                    <td><a class="btn btn-info" asp-controller="Tasks" asp-action="Completed" asp-route-id="@x.TaskId">Task Completed</a></td>
+                                    <td><a class="btn btn-danger" asp-controller="Tasks" asp-action="Delete" asp-route-id="@x.TaskId">Delete</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

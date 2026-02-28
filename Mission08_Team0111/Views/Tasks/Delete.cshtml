@@ -1,0 +1,13 @@
+@model Task
+
+<h2>Confirm Deletion</h2>
+<h3>@Model.Title</h3>
+
+<form method="post">
+    <input type="hidden" asp-for="TaskId">
+    
+    <button type="submit">Delete</button>
+    <a class="btn btn-info" asp-controller="Tasks" asp-action="Index">Cancel</a>
+    
+    
+</form>
