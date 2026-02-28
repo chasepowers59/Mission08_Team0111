@@ -1,164 +1,110 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Mission08_Team0111.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using Mission08_Team0111.Data;
-using Mission08_Team0111.ViewModels;
+using TaskModel = Mission08_Team0111.Models.Task;
 
 namespace Mission08_Team0111.Controllers
 {
+    // Handles task CRUD plus task completion actions for the app.
     public class TasksController : Controller
     {
         private readonly ITaskRepository _taskRepo;
-        private readonly ICategoryRepository _categoryRepo;
         private readonly ILogger<TasksController> _logger;
 
-        public TasksController(
-            ITaskRepository taskRepo,
-            ICategoryRepository categoryRepo,
-            ILogger<TasksController> logger)
+        public TasksController(ITaskRepository taskRepo, ILogger<TasksController> logger)
         {
             _taskRepo = taskRepo ?? throw new ArgumentNullException(nameof(taskRepo));
-            _categoryRepo = categoryRepo ?? throw new ArgumentNullException(nameof(categoryRepo));
             _logger = logger;
         }
 
-        // ===============================
-        // QUADRANTS PAGE (Main View)
-        // ===============================
-        public async Task<IActionResult> Index()
+        // Shows the Eisenhower matrix list view with only incomplete tasks.
+        public IActionResult Index()
         {
-            var tasks = (await _taskRepo.GetIncompleteAsync()).ToList();
-
-            var vm = new QuadrantsViewModel
-            {
-                QuadrantI = tasks.Where(t => t.Quadrant == Quadrant.I).ToList(),
-                QuadrantII = tasks.Where(t => t.Quadrant == Quadrant.II).ToList(),
-                QuadrantIII = tasks.Where(t => t.Quadrant == Quadrant.III).ToList(),
-                QuadrantIV = tasks.Where(t => t.Quadrant == Quadrant.IV).ToList()
-            };
-
-            return View(vm);
+            var tasks = _taskRepo.GetIncompleteTasks();
+            return View(tasks);
         }
 
-        // ===============================
-        // CREATE
-        // ===============================
-        public async Task<IActionResult> Create()
+        // Displays the add form (reusing the existing Home/AddTask view).
+        [HttpGet]
+        public IActionResult Add()
         {
-            var vm = new TaskViewModel
-            {
-                Categories = (await _categoryRepo.GetAllAsync()).ToList()
-            };
-
-            return View(vm);
+            return View("~/Views/Home/AddTask.cshtml", new TaskModel());
         }
 
+        // Creates a new task from form input.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TaskViewModel vm)
+        public IActionResult Add(TaskModel task)
         {
             if (!ModelState.IsValid)
             {
-                vm.Categories = (await _categoryRepo.GetAllAsync()).ToList();
-                return View(vm);
+                return View("~/Views/Home/AddTask.cshtml", task);
             }
-
-            var task = new TaskItem
-            {
-                TaskText = vm.TaskText?.Trim(),
-                DueDate = vm.DueDate,
-                Quadrant = vm.Quadrant,
-                CategoryId = vm.CategoryId,
-                Completed = false
-            };
 
             try
             {
-                await _taskRepo.AddAsync(task);
+                task.Title = task.Title.Trim();
+                _taskRepo.AddTask(task);
                 TempData["SuccessMessage"] = "Task created.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Error creating task");
-                TempData["ErrorMessage"] = "An error occurred while creating the task.";
-                vm.Categories = (await _categoryRepo.GetAllAsync()).ToList();
-                return View(vm);
+                _logger.LogError(ex, "Error creating task.");
+                ModelState.AddModelError(string.Empty, "An error occurred while creating the task.");
+                return View("~/Views/Home/AddTask.cshtml", task);
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
-        // ===============================
-        // EDIT
-        // ===============================
-        public async Task<IActionResult> Edit(int id)
+        // Loads the selected task for editing.
+        [HttpGet]
+        public IActionResult Edit(int id)
         {
-            var task = await _taskRepo.GetByIdAsync(id);
+            var task = _taskRepo.GetTaskById(id);
             if (task == null) return NotFound();
 
-            var vm = new TaskViewModel
-            {
-                TaskItemId = task.TaskItemId,
-                TaskText = task.TaskText,
-                DueDate = task.DueDate,
-                Quadrant = task.Quadrant,
-                CategoryId = task.CategoryId,
-                Completed = task.Completed,
-                Categories = (await _categoryRepo.GetAllAsync()).ToList()
-            };
-
-            return View(vm);
+            return View(task);
         }
 
+        // Persists changes to an existing task.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, TaskViewModel vm)
+        public IActionResult Edit(TaskModel task)
         {
-            if (id != vm.TaskItemId) return BadRequest();
-
             if (!ModelState.IsValid)
             {
-                vm.Categories = (await _categoryRepo.GetAllAsync()).ToList();
-                return View(vm);
+                return View(task);
             }
 
-            var existingTask = await _taskRepo.GetByIdAsync(id);
+            var existingTask = _taskRepo.GetTaskById(task.TaskId);
             if (existingTask == null) return NotFound();
 
-            existingTask.TaskText = vm.TaskText?.Trim();
-            existingTask.DueDate = vm.DueDate;
-            existingTask.Quadrant = vm.Quadrant;
-            existingTask.CategoryId = vm.CategoryId;
-            existingTask.Completed = vm.Completed;
+            existingTask.Title = task.Title.Trim();
+            existingTask.DueDate = task.DueDate;
+            existingTask.Quadrant = task.Quadrant;
+            existingTask.CategoryId = task.CategoryId;
+            existingTask.Completed = task.Completed;
 
             try
             {
-                await _taskRepo.UpdateAsync(existingTask);
+                _taskRepo.UpdateTask(existingTask);
                 TempData["SuccessMessage"] = "Task updated.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Error updating task id {TaskId}", id);
-                TempData["ErrorMessage"] = "An error occurred while updating the task.";
-                vm.Categories = (await _categoryRepo.GetAllAsync()).ToList();
-                return View(vm);
+                _logger.LogError(ex, "Error updating task id {TaskId}.", task.TaskId);
+                ModelState.AddModelError(string.Empty, "An error occurred while updating the task.");
+                return View(task);
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
-        // ===============================
-        // DELETE
-        // ===============================
+        // Deletes a task by id.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            var existing = await _taskRepo.GetByIdAsync(id);
-            if (existing == null)
+            var existingTask = _taskRepo.GetTaskById(id);
+            if (existingTask == null)
             {
                 TempData["ErrorMessage"] = "Task not found.";
                 return RedirectToAction(nameof(Index));
@@ -166,27 +112,25 @@ namespace Mission08_Team0111.Controllers
 
             try
             {
-                await _taskRepo.DeleteAsync(id);
+                _taskRepo.DeleteTask(existingTask);
                 TempData["SuccessMessage"] = "Task deleted.";
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Error deleting task id {TaskId}", id);
+                _logger.LogError(ex, "Error deleting task id {TaskId}.", id);
                 TempData["ErrorMessage"] = "Could not delete the task.";
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        // ===============================
-        // MARK COMPLETE
-        // ===============================
+        // Marks a task complete so it no longer appears in the incomplete list.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MarkComplete(int id)
+        public IActionResult MarkComplete(int id)
         {
-            var existing = await _taskRepo.GetByIdAsync(id);
-            if (existing == null)
+            var existingTask = _taskRepo.GetTaskById(id);
+            if (existingTask == null)
             {
                 TempData["ErrorMessage"] = "Task not found.";
                 return RedirectToAction(nameof(Index));
@@ -194,12 +138,13 @@ namespace Mission08_Team0111.Controllers
 
             try
             {
-                await _taskRepo.MarkCompleteAsync(id);
+                existingTask.Completed = true;
+                _taskRepo.UpdateTask(existingTask);
                 TempData["SuccessMessage"] = "Task marked complete.";
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Error marking task complete id {TaskId}", id);
+                _logger.LogError(ex, "Error marking task complete id {TaskId}.", id);
                 TempData["ErrorMessage"] = "Could not mark the task complete.";
             }
 
