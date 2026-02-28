@@ -1,13 +1,13 @@
 Mission 08 – Team Project
 Team Roles
 
-Models / Database / Setup: [Name]
+Models / Database / Setup: Jay
 
-Views – Shared & Add/Edit: [Name]
+Views – Shared & Add/Edit: Spencer
 
-Views – Quadrants: [Name]
+Views – Quadrants: Josh
 
-Controllers / Project Manager: [Your Name]
+Controllers / Project Manager: Chase
 
 Branch Rules
 
