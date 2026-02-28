@@ -1,0 +1,63 @@
+@model Mission08_Team0111.Models.Task
+
+@{
+    ViewData["Title"] = "Edit Task";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 col-lg-6">
+            <h2>Edit Task</h2>
+            <hr />
+
+            <form asp-action="Edit" method="post">
+                <input asp-for="TaskId" type="hidden" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label">Task</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DueDate" class="form-label">Due Date</label>
+                    <input asp-for="DueDate" type="date" class="form-control" />
+                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Quadrant" class="form-label">Quadrant</label>
+                    <select asp-for="Quadrant" class="form-select">
+                        <option value="">-- Select Quadrant --</option>
+                        <option value="1">Quadrant I: Important / Urgent</option>
+                        <option value="2">Quadrant II: Important / Not Urgent</option>
+                        <option value="3">Quadrant III: Not Important / Urgent</option>
+                        <option value="4">Quadrant IV: Not Important / Not Urgent</option>
+                    </select>
+                    <span asp-validation-for="Quadrant" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label">Category</label>
+                    <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="Completed" class="form-check-input" />
+                    <label asp-for="Completed" class="form-check-label">Completed</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

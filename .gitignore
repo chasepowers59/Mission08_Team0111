@@ -318,6 +318,14 @@ __pycache__/
 
 # Cake - Uncomment if you are using it
 # tools/**
+
+# Rider/IDE metadata
+.idea/
+
+# Local SQLite database files (generated at runtime)
+*.sqlite
+*.sqlite3
+!Mission08_Team0111/mission08_tasks.sqlite
 # !tools/packages.config
 
 # Tabs Studio
