@@ -12,12 +12,6 @@ namespace Mission08_Team0111.Controllers
             return RedirectToAction("Index", "Tasks");
         }
 
-        // Keep privacy page intact
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         // Default error handler (unchanged)
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

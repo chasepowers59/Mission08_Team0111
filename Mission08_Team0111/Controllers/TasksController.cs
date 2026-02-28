@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Mission08_Team0111.Data;
 using TaskModel = Mission08_Team0111.Models.Task;
 
@@ -23,11 +24,12 @@ namespace Mission08_Team0111.Controllers
             return View(tasks);
         }
 
-        // Displays the add form (reusing the existing Home/AddTask view).
+        // Displays the add form.
         [HttpGet]
         public IActionResult Add()
         {
-            return View("~/Views/Home/AddTask.cshtml", new TaskModel());
+            PopulateCategories();
+            return View(new TaskModel());
         }
 
         // Creates a new task from form input.
@@ -37,12 +39,13 @@ namespace Mission08_Team0111.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("~/Views/Home/AddTask.cshtml", task);
+                PopulateCategories(task.CategoryId);
+                return View(task);
             }
 
             try
             {
-                task.Title = task.Title.Trim();
+                task.Title = (task.Title ?? string.Empty).Trim();
                 _taskRepo.AddTask(task);
                 TempData["SuccessMessage"] = "Task created.";
                 return RedirectToAction(nameof(Index));
@@ -51,7 +54,8 @@ namespace Mission08_Team0111.Controllers
             {
                 _logger.LogError(ex, "Error creating task.");
                 ModelState.AddModelError(string.Empty, "An error occurred while creating the task.");
-                return View("~/Views/Home/AddTask.cshtml", task);
+                PopulateCategories(task.CategoryId);
+                return View(task);
             }
         }
 
@@ -62,6 +66,7 @@ namespace Mission08_Team0111.Controllers
             var task = _taskRepo.GetTaskById(id);
             if (task == null) return NotFound();
 
+            PopulateCategories(task.CategoryId);
             return View(task);
         }
 
@@ -72,13 +77,14 @@ namespace Mission08_Team0111.Controllers
         {
             if (!ModelState.IsValid)
             {
+                PopulateCategories(task.CategoryId);
                 return View(task);
             }
 
             var existingTask = _taskRepo.GetTaskById(task.TaskId);
             if (existingTask == null) return NotFound();
 
-            existingTask.Title = task.Title.Trim();
+            existingTask.Title = (task.Title ?? string.Empty).Trim();
             existingTask.DueDate = task.DueDate;
             existingTask.Quadrant = task.Quadrant;
             existingTask.CategoryId = task.CategoryId;
@@ -94,14 +100,25 @@ namespace Mission08_Team0111.Controllers
             {
                 _logger.LogError(ex, "Error updating task id {TaskId}.", task.TaskId);
                 ModelState.AddModelError(string.Empty, "An error occurred while updating the task.");
+                PopulateCategories(task.CategoryId);
                 return View(task);
             }
         }
 
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            var task = _taskRepo.GetTaskById(id);
+            if (task == null) return NotFound();
+
+            return View(task);
+        }
+
         // Deletes a task by id.
         [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
             var existingTask = _taskRepo.GetTaskById(id);
             if (existingTask == null)
@@ -149,6 +166,16 @@ namespace Mission08_Team0111.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private void PopulateCategories(int? selectedCategoryId = null)
+        {
+            ViewBag.Categories = new SelectList(
+                _taskRepo.GetCategories(),
+                "CategoryId",
+                "CategoryName",
+                selectedCategoryId
+            );
         }
     }
 }
